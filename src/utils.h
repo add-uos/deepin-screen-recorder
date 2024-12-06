@@ -15,7 +15,7 @@
 #include <QString>
 #include <QList>
 #include <QScreen>
-
+#include <QDBusReply>
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
@@ -153,6 +153,11 @@ public:
      */
     static QString getCpuModelName();
 
+    /**
+     * @brief 从DBus中获取缩放比例
+     * @return
+     */
+    static float getXsettingFactorFromDus();
 
 };
 

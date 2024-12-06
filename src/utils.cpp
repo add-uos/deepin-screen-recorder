@@ -440,6 +440,16 @@ QString Utils::getCpuModelName()
     return DSysInfo::cpuModelName();
 }
 
+float Utils::getXsettingFactorFromDus()
+{
+    QDBusInterface kwinInterface(QStringLiteral("com.deepin.daemon.Display"),
+                                 QStringLiteral("/com/deepin/XSettings"),
+                                 QStringLiteral("com.deepin.XSettings"));
+    QDBusReply<double> reply = kwinInterface.call(QStringLiteral("GetScaleFactor"));
+
+    return reply;
+}
+
 void Utils::notSupportWarn()
 {
     DDialog warnDlg;

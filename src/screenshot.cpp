@@ -28,7 +28,7 @@ void Screenshot::startScreenshot()
     m_window.initAttributes();
     m_window.initResource();
     m_window.initLaunchMode(m_launchMode);
-    if (Utils::isWaylandMode){
+    if (Utils::isWaylandMode && DSysInfo::minorVersion().toInt() >= 1070){
         m_window.showNormal();
     }else {
         m_window.showFullScreen();

@@ -151,19 +151,33 @@ void MainWindow::initMainWindow()
         m_cursorBound = 5;
     }
     setDragCursor();
+
+    float tmpFactor = 1.0;
     // Qt
     m_pixelRatio = qApp->primaryScreen()->devicePixelRatio();
     qDebug() << "Qt PixelRatio: " << m_pixelRatio;
 
     // Xsetting
-    m_pixelRatio = Utils::xsettingFactor;
-    qDebug() << "XSetting PixelRatio: " << m_pixelRatio;
+    tmpFactor = Utils::xsettingFactor;
+    qDebug() << "XSetting PixelRatio: " << tmpFactor;
+    if (tmpFactor >= m_pixelRatio) {
+        m_pixelRatio = tmpFactor;
+        qDebug() << "    -- will use Xsetting factor: " << tmpFactor;
+    }
+
+    // XSetting DBus
+    tmpFactor = Utils::getXsettingFactorFromDus();
+    qDebug() << "XSetting Dus PixelRatio: " << tmpFactor;
+    if (tmpFactor >= m_pixelRatio) {
+        m_pixelRatio = tmpFactor;
+        qDebug() << "    -- will use XSetting Dus factor: " << tmpFactor;
+    }
 
     // Local
     bool ok = false;
-    float tmpFactor = ConfigSettings::instance()->value("common", "scale_factor", 1).toFloat(&ok);
+    tmpFactor = ConfigSettings::instance()->value("common", "scale_factor", 1).toFloat(&ok);
     qDebug() << "Local PixelRatio: " << tmpFactor;
-    if (ok && tmpFactor > 0 && tmpFactor < 100){
+    if (ok && tmpFactor > 0 && tmpFactor < 100){        
         m_pixelRatio = tmpFactor;
         qDebug() << "    -- will use loacal factor: " << tmpFactor;
     }

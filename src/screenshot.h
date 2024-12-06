@@ -7,7 +7,7 @@
 #define SCREENSHOT_H
 
 #include "main_window.h"
-
+#include <DSysInfo>
 #include <QObject>
 
 
