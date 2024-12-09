@@ -1733,8 +1733,14 @@ void MainWindow::save2Clipboard(const QPixmap &pix)
     }
     if (Utils::is3rdInterfaceStart == false) {
         QMimeData *t_imageData = new QMimeData;
-        t_imageData->setImageData(pix);
-        Q_ASSERT(!pix.isNull());
+
+        // 图片数据过大时，可能影响后端剪贴板处理，调整为保存 PNG 图片
+        QByteArray bytes;
+        QBuffer buffer(&bytes);
+        buffer.open(QIODevice::WriteOnly);
+        pix.save(&buffer, "PNG");
+        t_imageData->setData("image/png", bytes);
+
         QClipboard *cb = qApp->clipboard();
         qInfo() << __FUNCTION__ << __LINE__ << "将数据传递到剪贴板！";
         cb->setMimeData(t_imageData, QClipboard::Clipboard);
