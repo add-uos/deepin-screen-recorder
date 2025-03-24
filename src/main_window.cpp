@@ -151,7 +151,25 @@ void MainWindow::initMainWindow()
         m_cursorBound = 5;
     }
     setDragCursor();
+    // Qt
     m_pixelRatio = qApp->primaryScreen()->devicePixelRatio();
+    qDebug() << "Qt PixelRatio: " << m_pixelRatio;
+
+    // Xsetting
+    m_pixelRatio = Utils::xsettingFactor;
+    qDebug() << "XSetting PixelRatio: " << m_pixelRatio;
+
+    // Local
+    bool ok = false;
+    float tmpFactor = ConfigSettings::instance()->value("common", "scale_factor", 1).toFloat(&ok);
+    qDebug() << "Local PixelRatio: " << tmpFactor;
+    if (ok && tmpFactor > 0 && tmpFactor < 100){
+        m_pixelRatio = tmpFactor;
+        qDebug() << "    -- will use loacal factor: " << tmpFactor;
+    }
+
+    // Final
+    qDebug() << "Final PixelRatio: " << m_pixelRatio;
     // 监控录屏过程中， 特效窗口的变化。
     connect(m_wmHelper, &DWindowManagerHelper::hasCompositeChanged, this, &MainWindow::compositeChanged);
 
@@ -2047,6 +2065,14 @@ void MainWindow::save2Clipboard(const QPixmap &pix)
                 QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
             }
             qInfo() << __FUNCTION__ << __LINE__ << "1s延时完成" << time(nullptr);
+            bool ok = false;
+            int extra_delay_time = 200;
+            auto tmpTime = ConfigSettings::instance()->value("common", "extra_delay_time", 1).toInt(&ok);
+            if (ok) {
+                extra_delay_time = tmpTime;
+            }
+            QThread::msleep(extra_delay_time);
+            qInfo() << __FUNCTION__ << __LINE__ << "额外延时" << extra_delay_time << "ms";
         } else {
             // 图片数据过大时，可能影响后端剪贴板处理，调整为保存 PNG 图片
             QByteArray bytes;

@@ -192,6 +192,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     float factor = getScreenFactor();
+    Utils::xsettingFactor = factor;
     if (factor > 0 && checkShouldScale()) {
         qDebug() << "scaleFactor available value: " << factor;
         qputenv("QT_SCALE_FACTOR", QString::number(1.0f / factor, 'g', 2).toLatin1());

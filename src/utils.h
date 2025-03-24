@@ -60,6 +60,7 @@ public:
     static bool isFFmpegEnv;
     static bool isRootUser;
     static int themeType;
+    static float xsettingFactor;
     /**
      * @brief specialRecordingScreenMode
      * -1:表示dconfig识别出现异常

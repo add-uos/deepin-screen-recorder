@@ -50,6 +50,7 @@
 #include <QSystemTrayIcon>
 #include <QVBoxLayout>
 #include <QTimer>
+#include <QThread>
 #include <unistd.h>
 #ifdef KF5_WAYLAND_FLAGE_ON
 #include <KF5/KWayland/Client/connection_thread.h>
