@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 - 2024 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2022 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -212,6 +212,7 @@ private:
     // AI 助手弹出菜单
     DMenu *m_aiAssistantMenu = nullptr;
     QAction *m_microphoneAction = nullptr;
+    QAction *m_sysAudioAction = nullptr;
     QButtonGroup *m_shotBtnGroup = nullptr;
 
     /**
