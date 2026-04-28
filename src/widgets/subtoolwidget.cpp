@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 - 2024 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2022 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -225,7 +225,7 @@ void SubToolWidget::initRecordOption()
     audio->setFont(titleActionFont);
     //QAction *notAudio = new QAction(tr("Not Audio"), m_recordOptionMenu);
     m_microphoneAction = new QAction(tr("Microphone"), m_recordOptionMenu);
-    QAction *sysAudio = new QAction(tr("System audio"), m_recordOptionMenu);
+    m_sysAudioAction = new QAction(tr("System audio"), m_recordOptionMenu);
     // 选项
     QAction *mouseInfo = new QAction(tr("Options"), m_recordOptionMenu);
     mouseInfo->setFont(titleActionFont);
@@ -270,11 +270,11 @@ void SubToolWidget::initRecordOption()
     audio->setDisabled(true);
     //notAudio->setCheckable(true);
     m_microphoneAction->setCheckable(true);
-    sysAudio->setCheckable(true);
-    //sysAudio->setChecked(true);
+    m_sysAudioAction->setCheckable(true);
+    //m_sysAudioAction->setChecked(true);
     //t_audioGroup->addAction(notAudio);
     t_audioGroup->addAction(m_microphoneAction);
-    t_audioGroup->addAction(sysAudio);
+    t_audioGroup->addAction(m_sysAudioAction);
 
     mouseInfo->setDisabled(true);
     //notMouse->setCheckable(true);
@@ -317,7 +317,7 @@ void SubToolWidget::initRecordOption()
     m_recordOptionMenu->addAction(audio);
     //m_recordOptionMenu->addAction(notAudio);
     m_recordOptionMenu->addAction(m_microphoneAction);
-    m_recordOptionMenu->addAction(sysAudio);
+    m_recordOptionMenu->addAction(m_sysAudioAction);
     //m_recordOptionMenu->addSeparator();
 
     m_recordOptionMenu->addAction(mouseInfo);
@@ -352,6 +352,8 @@ void SubToolWidget::initRecordOption()
         fps20Action->setEnabled(false);
         fps24Action->setEnabled(false);
         fps30Action->setEnabled(false);
+        m_microphoneAction->setEnabled(false);
+        m_sysAudioAction->setEnabled(false);
     } else if (save_format == 1) {
         mp4Action->setChecked(true);
         mp4Action->trigger();
@@ -360,6 +362,8 @@ void SubToolWidget::initRecordOption()
         fps20Action->setEnabled(true);
         fps24Action->setEnabled(true);
         fps30Action->setEnabled(true);
+        m_microphoneAction->setEnabled(true);
+        m_sysAudioAction->setEnabled(true);
     } else {
         mkvAction->setChecked(true);
         mkvAction->trigger();
@@ -368,6 +372,8 @@ void SubToolWidget::initRecordOption()
         fps20Action->setEnabled(true);
         fps24Action->setEnabled(true);
         fps30Action->setEnabled(true);
+        m_microphoneAction->setEnabled(true);
+        m_sysAudioAction->setEnabled(true);
     }
 
     connect(gifAction, &QAction::triggered, this, [ = ](bool checked) {
@@ -379,6 +385,8 @@ void SubToolWidget::initRecordOption()
         fps20Action->setEnabled(false);
         fps24Action->setEnabled(false);
         fps30Action->setEnabled(false);
+        m_microphoneAction->setEnabled(false);
+        m_sysAudioAction->setEnabled(false);
     });
 
     connect(mp4Action, &QAction::triggered, this, [ = ](bool checked) {
@@ -390,6 +398,8 @@ void SubToolWidget::initRecordOption()
         fps20Action->setEnabled(true);
         fps24Action->setEnabled(true);
         fps30Action->setEnabled(true);
+        m_microphoneAction->setEnabled(true);
+        m_sysAudioAction->setEnabled(true);
     });
 
     connect(mkvAction, &QAction::triggered, this, [ = ](bool checked) {
@@ -401,6 +411,8 @@ void SubToolWidget::initRecordOption()
         fps20Action->setEnabled(true);
         fps24Action->setEnabled(true);
         fps30Action->setEnabled(true);
+        m_microphoneAction->setEnabled(true);
+        m_sysAudioAction->setEnabled(true);
     });
 
     connect(t_fpsGroup, QOverload<QAction *>::of(&QActionGroup::triggered),
@@ -454,9 +466,9 @@ void SubToolWidget::initRecordOption()
     connect(t_audioGroup, QOverload<QAction *>::of(&QActionGroup::triggered), [ = ](QAction * t_act) {
         Q_UNUSED(t_act);
         int configValue = 0;
-        if (sysAudio->isChecked() && m_microphoneAction->isChecked()) {
+        if (m_sysAudioAction->isChecked() && m_microphoneAction->isChecked()) {
             configValue = 3;
-        } else if (sysAudio->isChecked()) {
+        } else if (m_sysAudioAction->isChecked()) {
             configValue = 2;
         } else if (m_microphoneAction->isChecked()) {
             configValue = 1;
@@ -498,19 +510,19 @@ void SubToolWidget::initRecordOption()
     qCWarning(dsrApp) << "历史音频设置：(0 无音频, 1 仅麦克风, 2 仅系统音频, 3 麦克风和系统音频)" << audioSetting;
     if (audioSetting == 3) {
         m_microphoneAction->setChecked(true);
-        sysAudio->setChecked(true);
+        m_sysAudioAction->setChecked(true);
     } else if (audioSetting == 2) {
-        sysAudio->setChecked(true);
+        m_sysAudioAction->setChecked(true);
         m_microphoneAction->setChecked(false);
     } else if (audioSetting == 1) {
         m_microphoneAction->setChecked(true);
-        sysAudio->setChecked(false);
+        m_sysAudioAction->setChecked(false);
     } else if (audioSetting == 0) {
         m_microphoneAction->setChecked(false);
-        sysAudio->setChecked(false);
+        m_sysAudioAction->setChecked(false);
     } else {
         m_microphoneAction->setChecked(true);
-        sysAudio->setChecked(true);
+        m_sysAudioAction->setChecked(true);
     }
 
     int save_opt = t_settings->getValue("recorder", "save_op").toInt();
@@ -2110,7 +2122,13 @@ void SubToolWidget::setMicroPhoneEnable(bool status)
 {
     qCDebug(dsrApp) << "Setting microphone enable status:" << status;
     qCDebug(dsrApp) << "mic 是否可选？" << status;
-    m_microphoneAction->setEnabled(status);
+    // GIF格式不支持音频，即使设备可用也不启用
+    int format = ConfigSettings::instance()->getValue("recorder", "format").toInt();
+    if (format == 0) {
+        m_microphoneAction->setEnabled(false);
+    } else {
+        m_microphoneAction->setEnabled(status);
+    }
     // 不再强制设置麦克风的选中状态，保留用户的选择
     // m_microphoneAction->setChecked(!status);
     // trigger()函数会改变当前的checked状态
